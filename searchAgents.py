@@ -37,6 +37,9 @@ Good luck and happy searching!
 from game import Directions
 from game import Agent
 from game import Actions
+from util import manhattanDistance as manhattan
+from util import Stack, Queue, PriorityQueue
+
 import util
 import time
 import search
@@ -265,7 +268,6 @@ def euclideanHeuristic(position, problem, info={}):
 #####################################################
 # This portion is incomplete.  Time to write code!  #
 #####################################################
-
 class CornersProblem(search.SearchProblem):
     """
     This search problem finds paths through all four corners of a layout.
@@ -288,21 +290,29 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-
+        self.costFn = lambda x,y: 1
+        # initialized corner visited state
+        self.cornerVisited=[False,False,False,False] 
+        # define a state as (position,corner visited list)
+        self.startState=(self.startingPosition,self.cornerVisited)
+        
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        start = self.startState
+        return start
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        corner_visited = state[1]
+        return corner_visited == [True, True, True, True]
+        
 
     def getSuccessors(self, state):
         """
@@ -325,9 +335,34 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
-
+           
+            x, y = state[0]
+            corner_visited = state[1]
+            dirX, dirY = Actions.directionToVector(action)
+            
+            x_prime, y_prime = int(x + dirX), int(y + dirY)
+            
+            corner_visited = corner_visited[:]
+            
+            isWall = self.walls[x_prime, y_prime]
+            
+            if not isWall:
+                corner_index = 0
+                for corner in self.corners:
+                    if (x_prime, y_prime) == corner:
+                        break
+                    corner_index = corner_index + 1
+                    
+            if corner_index < 4:
+                corner_visited_update[corner_index] = True
+            
+            state_new = ((x_prime, y_prime), corner_visited_update)
+            cost = self.costFn(x_prime, y_prime)
+            successors.append((state_new, action,cost))
+            
         self._expanded += 1 # DO NOT CHANGE
         return successors
+        
 
     def getCostOfActions(self, actions):
         """
