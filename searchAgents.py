@@ -195,11 +195,13 @@ class PositionSearchProblem(search.SearchProblem):
          cost of expanding to that successor
         """
 
+        #
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             x,y = state
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
+
             if not self.walls[nextx][nexty]:
                 nextState = (nextx, nexty)
                 cost = self.costFn(nextState)
@@ -300,7 +302,7 @@ class CornersProblem(search.SearchProblem):
         "*** YOUR CODE HERE ***"
         for i in [0,1,2,3]:
             if self.corners[i][0] == self.startingPosition[0] and self.corners[i][1] == self.startingPosition[1]:
-                self.startState[i+2] = True;
+                self.startState[i + 2] = True;
         return self.startState
 
     def isGoalState(self, state):
@@ -308,7 +310,8 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        return state[2] and state[3] and state[4] and state[5]
+        isGoal = state[0] and state[1] and state[2] and state[3] and state[4] and state[5]
+        return isGoal
         
 
     def getSuccessors(self, state):
@@ -336,18 +339,21 @@ class CornersProblem(search.SearchProblem):
             y = state[1]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
+
             if not(self.walls[nextx][nexty]):
                 newState = [nextx, nexty, state[2], state[3], state[4], state[5]]
+                
                 for i in [0,1,2,3]:
                     if self.corners[i][0] == newState[0] and self.corners[i][1] == newState[1]:
-                        newState[i+2] = True
-                successors.append( (newState, action, 1) )
+                        newState[i + 2] = True
+                successors.append((newState, action, 1))
             '''
+            # DEPRECATED SOLUTION NOT WORKING
             x, y = state[0]
             corner_visited = state[1]
-            dirX, dirY = Actions.directionToVector(action)
+            dx, dy = Actions.directionToVector(action)
             
-            x_prime, y_prime = int(x + dirX), int(y + dirY)
+            x_prime, y_prime = int(x + dx), int(y + dy)
             
             corner_visited = corner_visited[:]
             
@@ -400,7 +406,7 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-
+    
     "*** YOUR CODE HERE ***"
     return 0 # Default to trivial solution
 
