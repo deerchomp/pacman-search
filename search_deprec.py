@@ -23,6 +23,7 @@ class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
     any of the methods (in object-oriented terminology: an abstract class).
+
     You do not need to change anything in this class, ever.
     """
 
@@ -35,6 +36,7 @@ class SearchProblem:
     def isGoalState(self, state):
         """
           state: Search state
+
         Returns True if and only if the state is a valid goal state.
         """
         util.raiseNotDefined()
@@ -42,6 +44,7 @@ class SearchProblem:
     def getSuccessors(self, state):
         """
           state: Search state
+
         For a given state, this should return a list of triples, (successor,
         action, stepCost), where 'successor' is a successor to the current
         state, 'action' is the action required to get there, and 'stepCost' is
@@ -52,6 +55,7 @@ class SearchProblem:
     def getCostOfActions(self, actions):
         """
          actions: A list of actions to take
+
         This method returns the total cost of a particular sequence of actions.
         The sequence must be composed of legal moves.
         """
@@ -71,15 +75,19 @@ def tinyMazeSearch(problem):
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
+
     Your search algorithm needs to return a list of actions that reaches the
     goal. Make sure to implement a graph search algorithm.
+
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-    print "Start:", problem.getStartState()
-    print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-    print "Start's successors:", problem.getSuccessors(problem.getStartState())
+
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
+
     fringe = util.Stack()
     start = problem.getStartState()
     move = []
@@ -99,8 +107,6 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    # COMMENTING OUT INCOMPATIBLE BFS IMPLEMENTATION THAT USES LIST
-    '''
     fringe = util.Queue()
     start = problem.getStartState()
     moves = []
@@ -120,10 +126,13 @@ def breadthFirstSearch(problem):
 
             for child_node, move, step in problem.getSuccessors(node):
                 fringe.push((child_node, moves + [move], cost + [step]))
-                '''
-    node = genSearch(problem, util.Queue())
-    return path(node)
-    
+            
+
+
+def uniformCostSearch(problem):
+    """Search the node of least total cost first."""
+    "*** YOUR CODE HERE ***"
+    util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """
@@ -131,9 +140,6 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
-
-def cost(node, problem=None, heuristic=nullHeuristic) :
-    return node.cost + heuristic(node.state, problem)
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
@@ -166,70 +172,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         (state, move, toCost) = fringe.pop()
 
     return move
-
-def uniformCostSearch(problem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined
-
-def genSearch(problem, fringe):
-    # Generic search template used from project directions to facilitate Q4 BFS list subscript problems with
-    # my implemenation
-    """
-    Graph search implementation as suggested by spec.
-    Allows for far easier implementation of other search algorithms.
-    Code directly follows pseudocode given in project directions.
-    """
-    closed = []
-    fringe.push(Node(problem.getStartState()))
-    while(True):
-        if fringe.isEmpty():
-            return None
-        node = fringe.pop()
-        if problem.isGoalState(node.state):
-            return node
-        if node.state not in closed:
-            closed.append(node.state)
-            for newNode in expand(node, problem):
-                fringe.push(newNode)
-
-def expand(node, problem):
-    """
-    Returns the list of children nodes accessible from current nodestate.
-    Unlike the pseudocode, this takes in a node rather than just its state.
-    This is so that we can correctly point nodes to their parents.
-    """
-    successors = []
-    for successor, action, stepCost in problem.getSuccessors(node.state):
-        s = Node(successor, node, action, stepCost, 1)
-        successors.append(s)
-    return successors
-
-def path(node):
-    """
-    Returns a list of actions, following parent pointers.
-    """
-    path = []
-    while (node.parent != None):
-        path.extend([node.action])
-        node = node.parent
-    return list(reversed(path))
-
-class Node:
-    """
-    Node implementation catered towards graph search algorithm.
-    """
-    def __init__(self, state=None, parent=None, action=None, cost=0, depth=0):
-        self.state = state
-        self.parent = parent
-        self.action = action
-        if parent != None:
-            self.cost = cost + parent.cost
-            self.depth = depth + parent.depth
-        else:
-            self.cost = cost
-            self.depth = depth
-    
 
 
 # Abbreviations

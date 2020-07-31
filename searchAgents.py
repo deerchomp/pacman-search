@@ -290,11 +290,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self.costFn = lambda x,y: 1
-        # initialized corner visited state
-        self.cornerVisited=[False,False,False,False] 
-        # define a state as (position,corner visited list)
-        self.startState=(self.startingPosition,self.cornerVisited)
+        self.startState = [self.startingPosition[0], self.startingPosition[1], False, False, False, False]
         
     def getStartState(self):
         """
@@ -302,16 +298,17 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        start = self.startState
-        return start
+        for i in [0,1,2,3]:
+            if self.corners[i][0] == self.startingPosition[0] and self.corners[i][1] == self.startingPosition[1]:
+                self.startState[i+2] = True;
+        return self.startState
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        corner_visited = state[1]
-        return corner_visited == [True, True, True, True]
+        return state[2] and state[3] and state[4] and state[5]
         
 
     def getSuccessors(self, state):
@@ -335,7 +332,17 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
-           
+            x = state[0]
+            y = state[1]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            if not(self.walls[nextx][nexty]):
+                newState = [nextx, nexty, state[2], state[3], state[4], state[5]]
+                for i in [0,1,2,3]:
+                    if self.corners[i][0] == newState[0] and self.corners[i][1] == newState[1]:
+                        newState[i+2] = True
+                successors.append( (newState, action, 1) )
+            '''
             x, y = state[0]
             corner_visited = state[1]
             dirX, dirY = Actions.directionToVector(action)
@@ -359,7 +366,7 @@ class CornersProblem(search.SearchProblem):
             state_new = ((x_prime, y_prime), corner_visited_update)
             cost = self.costFn(x_prime, y_prime)
             successors.append((state_new, action,cost))
-            
+            '''
         self._expanded += 1 # DO NOT CHANGE
         return successors
         
